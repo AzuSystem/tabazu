@@ -28,6 +28,21 @@ Window {
 	    	ListElement { name: "apppp" }
 	    	ListElement { name: "apppp" }
 	    	ListElement { name: "apppp" }
+	    	ListElement { name: "apppp" }
+	    	ListElement { name: "apppp" }
+	    	ListElement { name: "apppp" }
+	    	ListElement { name: "apppp" }
+	    	ListElement { name: "apppp" }
+	    	ListElement { name: "apppp" }
+	    	ListElement { name: "apppp" }
+	    	ListElement { name: "apppp" }
+	    	ListElement { name: "apppp" }
+	    	ListElement { name: "apppp" }
+	    	ListElement { name: "apppp" }
+	    	ListElement { name: "apppp" }
+	    	ListElement { name: "apppp" }
+	    	ListElement { name: "apppp" }
+	    	ListElement { name: "apppp" }
 	    }
 
 	    // ListView {
@@ -48,7 +63,31 @@ Window {
 	    	anchors.fill: parent
 			flickableDirection: Flickable.VerticalFlick
 			id: scroll
+			interactive: false
 
+			property int scrollIndex: 0
+
+			Keys.onPressed: function(event) {
+				if ( event.key === Qt.Key_Tab ) {
+					scrollIndex += 1
+					event.accepted = true
+
+					if ( scrollIndex > appList.count / 2 ) {
+						scrollIndex = -scrollIndex
+					}
+				} else if ( event.key === Qt.Key_Backtab ) {
+					scrollIndex -= 1
+					event.accepted = true
+					
+					if ( scrollIndex < -appList.count / 2 ) {
+						scrollIndex = -scrollIndex
+					}
+				}
+			}
+
+			Component.onCompleted: {
+				forceActiveFocus()
+			}
 
 		    Repeater {
 		    	model: appList
@@ -63,9 +102,16 @@ Window {
 		    		property real realY: scroll.y + y - scroll.contentY;
 
 		    		// y: ( index * 20 ) + (parent.height / 2)
-		    		y: ( index - ( 5 - 1 ) / 2 ) * 20 + scroll.height / 2
+		    		y: ( index - ( 20 - 1 ) / 2 ) * 20 + scroll.height / 2 + ( -scroll.scrollIndex * 20 ) 
 
 		    		x: ( 0.002 * Math.pow(realY - (window.height / 2), 2) ) + scroll.width - width - 20
+
+		    		Behavior on y {
+		    			NumberAnimation {
+		    				easing: Easing.OutCirc
+		    				duration: 200
+		    			}
+		    		}
 
 		    		Component.onCompleted: {
 		    			console.log(realY);
