@@ -15,6 +15,14 @@ Window {
 	// flags: Qt.FramelessWindowHint | Qt.X11BypassWindowManagerHint | Qt.WindowStaysOnBottomHint
 	color: "transparent"
 	x: screen.width - width
+	opacity: 0.0
+
+	Behavior on opacity {
+		NumberAnimation {
+			easing: Easing.InOutQuart
+			duration: 250
+		}
+	}
 
 	Rectangle {
 		anchors.fill: parent
@@ -67,6 +75,7 @@ Window {
 			flickableDirection: Flickable.VerticalFlick
 			id: scroll
 			interactive: false
+			anchors.rightMargin: -window.width
 
 			property int scrollIndex: 0
 
@@ -85,6 +94,29 @@ Window {
 					if ( scrollIndex < -appList.count / 2 ) {
 						scrollIndex = -scrollIndex
 					}
+				}
+			}
+
+			Timer {
+				id: closeDelay
+				interval: 500
+				repeat: false
+
+				onTriggered: {
+					window.close()
+				}
+			}
+
+			Keys.onEscapePressed: {
+				closeAnim.start()
+				window.opacity = 0.0;
+				closeDelay.start()
+			}
+
+			Behavior on anchors.rightMargin {
+				NumberAnimation {
+					easing: Easing.OutCirc
+					duration: 350
 				}
 			}
 
@@ -136,5 +168,19 @@ Window {
 			}
 		}
 
+	}
+
+	NumberAnimation {
+		id: closeAnim
+		target: scroll
+		property: "anchors.rightMargin"
+		to: -window.width
+		duration: 350
+		easing: Easing.InCirc
+	}
+
+	Component.onCompleted: {
+		window.opacity = 1.0
+		scroll.anchors.rightMargin = 0
 	}
 }
